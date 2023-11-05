@@ -4,11 +4,13 @@ void print_list_chain(FILE* dot_file, LIST* list, int start_id, const char* colo
 {
     while (start_id != 0)
     {
-        fprintf(dot_file, "node%d: <next> -> node%d [color = \"%s\"];\n",
+        fprintf(dot_file, "node%d -> node%d [color = \"%s\"];\n",
                 start_id, array[start_id].next, color);
         if (array[start_id].prev != -1)
         {
-            fprintf(dot_file, "node%d: <prev> -> node%d [color = \"lightgoldenrod1\"];\n",
+            fprintf(dot_file, "node%d -> node%d [color = \"lightgoldenrod1\"];\n",
+                    start_id, array[start_id].prev);
+            fprintf(dot_file, "node%d -> node%d [style = invis; weight = 1000000];\n",
                     start_id, array[start_id].prev);
         }
 
@@ -48,6 +50,8 @@ void print_all_nodes (FILE* dot_file, LIST* list)
     fprintf(dot_file, "{rank = max;");
     fprintf(dot_file, "node%d[shape = Mrecord, style = filled, fillcolor=\"#FF0000\", label = \"NODE_%d| {<data> POISON| <next> next : %d | <prev> prev : %d}\"];\n",
                 0, 0, array[0].next, array[0].prev);
+    fprintf(dot_file, "}\n");
+    fprintf(dot_file, "{rank = same;");
     for (int i = 1; i < list->data_size; i++)
         print_node(dot_file, list, i);
 
@@ -91,8 +95,8 @@ void make_dot_dump(FILE* dot_file, LIST* list)
 
     print_list_chain(dot_file, list, array[0].next, "snow1");
 
-    fprintf(dot_file, "node%d: <prev> -> node%d [color = \"red\"];\n", 0, array[0].prev);
-    fprintf(dot_file, "node%d: <prev> -> node%d [color = \"red\"];\n", 0, array[0].next);
+    fprintf(dot_file, "node%d -> node%d [color = \"red\"];\n", 0, array[0].prev);
+    fprintf(dot_file, "node%d -> node%d [color = \"red\"];\n", 0, array[0].next);
 
     print_list_chain(dot_file, list, list->first_free, "limegreen");
 

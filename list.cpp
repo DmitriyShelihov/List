@@ -1,6 +1,6 @@
 #include "list.h"
 
-int main()
+int data_ctor(ELEM* data, int size_of_data)
 {
     data->value = POISON;
     data->next = 0;
@@ -260,7 +260,7 @@ int list_insert_after(LIST* list, int index, double insert_value)
 
 int list_push_back(LIST* list, double insert_value)
 {
-    if (list->first_free == 0)
+    if (list->first_free == 0 || (list->data_size == 2 && list->elem_number == 0))
     {
         int new_size = list_resize(list, (list->data_size)*2);
         //printf(BLUE "List data reallocated(increased)! New list size is: %d\n" END_OF_COLOUR, new_size);
