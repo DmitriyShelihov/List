@@ -7,6 +7,10 @@
         "fstream": "cpp",
         "istream": "cpp",
         "streambuf": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "array": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp"
     }
 }
