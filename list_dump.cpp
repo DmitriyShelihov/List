@@ -5,16 +5,17 @@ void print_list_chain(FILE* dot_file, LIST* list, int start_id, const char* colo
     while (start_id != 0)
     {
         fprintf(dot_file, "node%d -> node%d [color = \"%s\"];\n",
-                start_id, array[start_id].next, color);
-        if (array[start_id].prev != -1)
+                start_id, ARRAY[start_id].next, color);
+
+        if (ARRAY[start_id].prev != -1)
         {
             fprintf(dot_file, "node%d -> node%d [color = \"lightgoldenrod1\"];\n",
-                    start_id, array[start_id].prev);
+                    start_id, ARRAY[start_id].prev);
             fprintf(dot_file, "node%d -> node%d [style = invis; weight = 1000000];\n",
-                    start_id, array[start_id].prev);
+                    start_id, ARRAY[start_id].prev);
         }
 
-        start_id = array[start_id].next;
+        start_id = ARRAY[start_id].next;
     }
 
 }
@@ -33,26 +34,25 @@ void make_nodes_in_raw(FILE* dot_file, size_t data_size)
 
 void print_node(FILE* dot_file, LIST* list, int index)
 {
-    if (array[index].prev == -1)
+    if (ARRAY[index].prev == -1)
     {
         fprintf(dot_file, "node%d[shape = Mrecord, style = filled, fillcolor=\"limegreen\", label = \"NODE_%d| {<data> FREE| <next> next : %d | <prev> prev : %d}\"];\n",
-                index, index, array[index].next, array[index].prev);
+                index, index, ARRAY[index].next, ARRAY[index].prev);
     }
     else
     {
         fprintf(dot_file, "node%d[shape = Mrecord, style = filled, fillcolor=\"mediumturquoise\", label = \"NODE_%d| {<data> data : %.4lf| <next> next : %d | <prev> prev : %d}\"];\n",
-                index, index, array[index].value, array[index].next, array[index].prev);
+                index, index, ARRAY[index].value, ARRAY[index].next, ARRAY[index].prev);
     }
 }
 
 void print_all_nodes (FILE* dot_file, LIST* list)
 {
-    fprintf(dot_file, "{rank = max;");
-    fprintf(dot_file, "node%d[shape = Mrecord, style = filled, fillcolor=\"#FF0000\", label = \"NODE_%d| {<data> POISON| <next> next : %d | <prev> prev : %d}\"];\n",
-                0, 0, array[0].next, array[0].prev);
-    fprintf(dot_file, "}\n");
-    fprintf(dot_file, "{rank = same;");
-    for (int i = 1; i < list->data_size; i++)
+    fprintf(dot_file, "{rank = max;node%d[shape = Mrecord, style = filled, fillcolor=\"#FF0000\", label = \"NODE_%d|"
+                      "{<data> POISON| <next> next : %d | <prev> prev : %d}\"];\n}\n"
+                      "{rank = same;", 0, 0, ARRAY[0].next, ARRAY[0].prev);
+
+    for (int i = 1; i < DATA_SIZE; i++)
         print_node(dot_file, list, i);
 
     fprintf(dot_file, "}\n");
@@ -60,9 +60,10 @@ void print_all_nodes (FILE* dot_file, LIST* list)
 
 void print_main_cells(FILE* dot_file, LIST* list)
 {
-    fprintf(dot_file, "head -> node%d [color = \"mediumturquoise\"];\n", array[0].next);
-    fprintf(dot_file, "tail -> node%d [color = \"mediumturquoise\"];\n", array[0].prev);
-    fprintf(dot_file, "free -> node%d [color = \"limegreen\"];\n", list->first_free);
+    fprintf(dot_file, "head -> node%d [color = \"mediumturquoise\"];\n"
+                       "tail -> node%d [color = \"mediumturquoise\"];\n"
+                       "free -> node%d [color = \"limegreen\"];\n",
+                       ARRAY[0].next, ARRAY[0].prev, FIRST_FREE);
 }
 
 void make_dot_dump(FILE* dot_file, LIST* list)
@@ -87,18 +88,20 @@ void make_dot_dump(FILE* dot_file, LIST* list)
                             "{rank = min;\n"
                                 "free[label = \"free\", shape = Mrecord, style = filled, fillcolor=\"limegreen\", width = 1];\n"
                             "}\n");
+
     print_main_cells(dot_file, list);
 
     print_all_nodes(dot_file, list);
 
-    make_nodes_in_raw(dot_file, list->data_size);
+    make_nodes_in_raw(dot_file, DATA_SIZE);
 
-    print_list_chain(dot_file, list, array[0].next, "snow1");
+    print_list_chain(dot_file, list, ARRAY[0].next, "snow1");
 
-    fprintf(dot_file, "node%d -> node%d [color = \"red\"];\n", 0, array[0].prev);
-    fprintf(dot_file, "node%d -> node%d [color = \"red\"];\n", 0, array[0].next);
+    fprintf(dot_file, "node%d -> node%d [color = \"red\"];\n"
+                       "node%d -> node%d [color = \"red\"];\n",
+                       0, ARRAY[0].prev, 0, ARRAY[0].next);
 
-    print_list_chain(dot_file, list, list->first_free, "limegreen");
+    print_list_chain(dot_file, list, FIRST_FREE, "limegreen");
 
     fprintf(dot_file, "}");
 }
@@ -106,37 +109,42 @@ void make_dot_dump(FILE* dot_file, LIST* list)
 int list_dump_png(LIST* list)
 {
     FILE* dot_file = fopen("auto_file.dot", "w");
+
     if (dot_file == NULL)
     {
         printf(RED "ERROR: didn't create dot file\n" END_OF_COLOUR);
         return -1;
     }
-    make_dot_dump(dot_file, list);
-    fclose(dot_file);
 
+    make_dot_dump(dot_file, list);
+
+    fclose(dot_file);
     system("dot auto_file.dot -T png -o graph.png");
 
     FILE* dump_txt = fopen("dump.txt", "w");
+
     if (dump_txt == NULL)
     {
         printf("dump_txt file creating error");
         return -1;
     }
+
     file_dump_list(dump_txt, list);
 
     FILE* dump_html = fopen("dump.html", "w");
+
     if (dump_html == NULL)
     {
         printf(RED "dump_html file creating error" END_OF_COLOUR);
         return -2;
     }
-    fprintf(dump_html, "<!DOCTYPE html>\n"
-                           "<html>\n");
-    fprintf(dump_html, "<iframe src=\"dump.txt\" width=\"100%%\" height=\"300\">\n");
-    fprintf(dump_html, "</iframe>\n");
 
-    fprintf(dump_html, "<img src=\"graph.png\" width=\"%d\" height=\"200\">\n", 150 * list->data_size);
-    fprintf(dump_html, "</html>\n");
+    fprintf(dump_html, "<!DOCTYPE html>\n"
+                       "<html>\n"
+                       "<iframe src=\"dump.txt\" width=\"100%%\" height=\"300\">\n"
+                       "</iframe>\n"
+                       "<img src=\"graph.png\" width=\"%d\" height=\"200\">\n"
+                       "</html>\n", 150 * DATA_SIZE);
 
     fclose(dump_html);
 }
@@ -144,33 +152,28 @@ int list_dump_png(LIST* list)
 int file_dump_list(FILE* output_file, LIST* list)
 {
     fprintf(output_file, "Main info: head: %d, tail: %d, free: %d, data_size: %d, elem_number: %d\n" ,
-          array[0].next, array[0].prev, list->first_free, list->data_size, list->elem_number);
+          ARRAY[0].next, ARRAY[0].prev, FIRST_FREE, DATA_SIZE, list->elem_number);
     fprintf(output_file, "LIST DUMP:\n");
-    if (list == NULL)
-    {
-        fprintf(output_file, "List_dump cannot find list <NULL POINTER");
-        return -1;
-    }
     fprintf(output_file, "Number: |");
-    for (int i = 0; i < list->data_size; i++)
+    for (int i = 0; i < DATA_SIZE; i++)
         fprintf(output_file, " %11d |", i);
     fprintf(output_file, "\n");
 
     fprintf(output_file, "Data  : |");
-    for (int i = 0; i < list->data_size; i++)
+    for (int i = 0; i < DATA_SIZE; i++)
     {
-        if (array[i].value != POISON)
-            fprintf(output_file, " %11lf |", array[i].value);
+        if (ARRAY[i].value != POISON)
+            fprintf(output_file, " %11lf |", ARRAY[i].value);
         else
             fprintf(output_file, "     Poison  |");
     }
     fprintf(output_file, "\n");
     fprintf(output_file, "Next  : |");
-    for (int i = 0; i < list->data_size; i++)
-        fprintf(output_file," %11d |", array[i].next);
+    for (int i = 0; i < DATA_SIZE; i++)
+        fprintf(output_file," %11d |", ARRAY[i].next);
     fprintf(output_file,"\nPrev  : |");
-    for (int i = 0; i < list->data_size; i++)
-        fprintf(output_file," %11d |", array[i].prev);
+    for (int i = 0; i < DATA_SIZE; i++)
+        fprintf(output_file," %11d |", ARRAY[i].prev);
     fprintf(output_file,"\n\n");
     return 0;
 }

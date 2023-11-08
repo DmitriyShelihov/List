@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <float.h>
+#include <assert.h>
 
 #define RED           "\x1b[31;2m"
 #define YELLOW        "\x1b[33;2m"
@@ -12,7 +13,10 @@
 #define BLUE          "\x1b[34;2m"
 #define END_OF_COLOUR "\x1b[39;49m"
 
-#define array (list->data)
+#define ARRAY      (list->data)
+#define FIRST_FREE (list->first_free)
+#define DATA_SIZE  (list->data_size)
+
 const double VERY_BIG = DBL_MAX;
 const double POISON = DBL_MIN;
 
@@ -31,7 +35,7 @@ typedef struct _list
     size_t elem_number;
 }LIST;
 
-int list_dump_verbose(LIST* list);
+void list_dump_verbose(LIST* list);
 
 int list_dump(LIST* list);
 
