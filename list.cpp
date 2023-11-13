@@ -121,10 +121,8 @@ int list_insert_after(LIST* list, int index, double insert_value)
     }
 
     if (FIRST_FREE == 0)
-    {
         int new_size = list_resize(list, DATA_SIZE*2);
-        //printf(BLUE "List data reallocated(increased)! New list size is: %d\n" END_OF_COLOUR, new_size);
-    }
+
 
     list->elem_number++;
 
