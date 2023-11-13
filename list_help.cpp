@@ -11,14 +11,16 @@ double list_elem(LIST* list, int index)
 
 int list_arrange(LIST* list)
 {
-    ELEM* data_new = (ELEM*)calloc(DATA_SIZE, sizeof(ELEM));
+    size_t new_size = list->elem_number + 1;
+
+    ELEM* data_new = (ELEM*)calloc(new_size, sizeof(ELEM));
 
     data_new->value = POISON;
     data_new->next = 0;
     data_new->prev = 0;
     data_new++;
 
-    for (int i = 1; i < DATA_SIZE - 1; i++)
+    for (int i = 1; i < new_size - 1; i++)
     {
         data_new->value = POISON;
         data_new->next = i + 1;
@@ -29,12 +31,12 @@ int list_arrange(LIST* list)
     data_new->value = POISON;
     data_new->next = 0;
     data_new->prev = -1;
-    data_new -= DATA_SIZE -1;
+    data_new -= new_size - 1;
 
     int current_index = ARRAY[0].next;
     int new_index = 1;
 
-    while (current_index != ARRAY[0].prev)
+    while (current_index != ARRAY[0].prev)   /// while index != tail
     {
         int new_current_index = ARRAY[current_index].next;
 
@@ -54,18 +56,13 @@ int list_arrange(LIST* list)
     data_new[new_index].prev = ARRAY[current_index].prev;
 
     data_new[0].prev = new_index;
+
+    free(list->data);
+
     ARRAY = data_new;
-
-    if (new_index + 1 == DATA_SIZE)
-        FIRST_FREE = 0;
-    else
-        FIRST_FREE = new_index + 1;
-
-    if (list->elem_number * 2 < DATA_SIZE)
-    {
-        ARRAY = (ELEM*)realloc(ARRAY, DATA_SIZE/2 * sizeof(ELEM));
-        return 1;
-    }
+    DATA_SIZE = new_size;
+    FIRST_FREE = 0;
+    ARRAY[0].next = 1;
 
     return 2;
 }

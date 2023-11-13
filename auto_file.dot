@@ -1,0 +1,37 @@
+digraph G{rankdir = HR;
+graph [dpi = 150];
+ranksep = 0.5;
+splines = ortho;
+edge[minlen = 3, penwidth = 3];
+graph [bgcolor="#31353b"]node[color="black",fontsize=14];
+edge[color="darkgreen",fontcolor="blue",fontsize=12];
+node[shape = record, style = rounded, fixedsize = true, height = 1, width = 3, fontsize = 20];
+{rank = min;
+head[label = "head", shape = Mrecord, style = filled, fillcolor="mediumturquoise",width = 1];
+}
+{rank = min;
+tail[label = "tail", shape = Mrecord, style = filled, fillcolor="mediumturquoise", width = 1];
+}
+{rank = min;
+free[label = "free", shape = Mrecord, style = filled, fillcolor="limegreen", width = 1];
+}
+head -> node1 [color = "mediumturquoise"];
+tail -> node2 [color = "mediumturquoise"];
+free -> node3 [color = "limegreen"];
+{rank = max;node0[shape = Mrecord, style = filled, fillcolor="#FF0000", label = "NODE_0|{<data> POISON| <next> next : 1 | <prev> prev : 2}"];
+}
+{rank = same;node1[shape = Mrecord, style = filled, fillcolor="mediumturquoise", label = "NODE_1| {<data> data : 1.0000| <next> next : 2 | <prev> prev : 0}"];
+node2[shape = Mrecord, style = filled, fillcolor="mediumturquoise", label = "NODE_2| {<data> data : 5.0000| <next> next : 0 | <prev> prev : 1}"];
+node3[shape = Mrecord, style = filled, fillcolor="limegreen", label = "NODE_3| {<data> FREE| <next> next : 0 | <prev> prev : -1}"];
+}
+node0 ->node1 ->node2 ->node3[weight = 10000; style = invis];
+node1 -> node2 [color = "snow1"];
+node1 -> node0 [color = "lightgoldenrod1"];
+node1 -> node0 [style = invis; weight = 1000000];
+node2 -> node0 [color = "snow1"];
+node2 -> node1 [color = "lightgoldenrod1"];
+node2 -> node1 [style = invis; weight = 1000000];
+node0 -> node2 [color = "red"];
+node0 -> node1 [color = "red"];
+node3 -> node0 [color = "limegreen"];
+}

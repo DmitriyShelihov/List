@@ -34,68 +34,6 @@ int list_resize(LIST* list, int new_size)
     return new_size;
 }
 
-int list_dump(LIST* list)
-{
-    printf(YELLOW "USER LIST DUMP:\n" END_OF_COLOUR);
-
-    if (list == NULL)
-    {
-        printf(RED "List_dump cannot find list, <NULL POINTER>" END_OF_COLOUR);
-        return -1;
-    }
-    printf(RED "[" END_OF_COLOUR);
-
-    for (int i = ARRAY[0].next; i != ARRAY[0].prev; i = ARRAY[i].next)
-    {
-        printf(" %11lf " RED "," END_OF_COLOUR, ARRAY[i].value);
-
-    }
-
-    if (ARRAY[0].next == ARRAY[0].prev && ARRAY[ARRAY[0].next].next != 0)
-    {
-        printf(RED "]" END_OF_COLOUR);
-        printf("\n\n");
-        return 0;
-    }
-    printf(" %11lf " RED "]\n\n" END_OF_COLOUR, ARRAY[ARRAY[0].prev].value);
-    return 0;
-}
-
-void list_dump_verbose(LIST* list)
-{
-    assert(list != NULL);
-
-    printf(YELLOW "Main info: head: %d, tail: %d, free: %d, data_size: %d, elem_number: %d\n"
-           YELLOW "LIST DUMP:\n" END_OF_COLOUR
-          "Number: " RED "|" END_OF_COLOUR,
-          ARRAY[0].next, ARRAY[0].prev, FIRST_FREE, DATA_SIZE, list->elem_number);
-
-    for (int i = 0; i < DATA_SIZE; i++)
-        printf(BLUE " %11d " RED "|" END_OF_COLOUR, i);
-
-    printf("\nData  : " RED "|" END_OF_COLOUR);
-
-    for (int i = 0; i < DATA_SIZE; i++)
-    {
-        if (ARRAY[i].value != POISON)
-            printf(" %11lf " RED "|" END_OF_COLOUR, ARRAY[i].value);
-        else
-            printf(GREEN"     Poison  " RED "|" END_OF_COLOUR);
-    }
-
-    printf("\nNext  : " RED "|" END_OF_COLOUR);
-
-    for (int i = 0; i < DATA_SIZE; i++)
-        printf(" %11d " RED "|" END_OF_COLOUR, ARRAY[i].next);
-
-    printf("\nPrev  : " RED "|" END_OF_COLOUR);
-
-    for (int i = 0; i < DATA_SIZE; i++)
-        printf(" %11d " RED "|" END_OF_COLOUR, ARRAY[i].prev);
-
-    printf("\n\n");
-}
-
 int list_pop(LIST* list, int index)
 {
     if (index >= DATA_SIZE || ARRAY[index].value == POISON)
@@ -146,10 +84,7 @@ int list_insert_before(LIST* list, int index, double insert_value)
     }
 
     if (FIRST_FREE == 0)
-    {
         int new_size = list_resize(list, DATA_SIZE*2);
-        //printf(BLUE "List data reallocated(increased)! New list size is: %d\n" END_OF_COLOUR, new_size);
-    }
 
     list->elem_number++;
     int result = FIRST_FREE;
@@ -210,10 +145,8 @@ int list_insert_after(LIST* list, int index, double insert_value)
 int list_push_back(LIST* list, double insert_value)
 {
     if (FIRST_FREE == 0 || (DATA_SIZE == 2 && list->elem_number == 0))
-    {
         int new_size = list_resize(list, (DATA_SIZE)*2);
-        //printf(BLUE "List data reallocated(increased)! New list size is: %d\n" END_OF_COLOUR, new_size);
-    }
+
     list->elem_number++;
     int result = FIRST_FREE;
     int new_free = ARRAY[FIRST_FREE].next;

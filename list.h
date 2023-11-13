@@ -35,23 +35,19 @@ typedef struct _list
     size_t elem_number;
 }LIST;
 
-void list_dump_verbose(LIST* list);
-
-int list_dump(LIST* list);
-
 int list_insert_before(LIST* list, int index, double insert_value);
 
 int list_insert_after(LIST* list, int index, double insert_value);
 
 LIST* list_ctor(int size_of_list);
 
+int list_dtor(LIST* list);
+
 int list_pop(LIST* list, int index);
 
 int list_verify(LIST* list);
 
 int list_push_back(LIST* list, double insert_value);
-
-int list_dtor(LIST* list);
 
 int list_push_front(LIST* list, double insert_value);
 

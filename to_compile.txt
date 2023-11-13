@@ -1,0 +1,2 @@
+g++ list.cpp main.cpp list_help.cpp list_dump.cpp -o list.exe
+.\list.exe

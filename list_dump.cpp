@@ -1,5 +1,17 @@
 #include "list_dump.h"
 
+void print_list_chain(FILE* dot_file, LIST* list, int start_id, const char* color);
+
+void make_nodes_in_raw(FILE* dot_file, size_t data_size);
+
+void print_node(FILE* dot_file, LIST* list, int index);
+
+void print_all_nodes (FILE* dot_file, LIST* list);
+
+void print_main_cells(FILE* dot_file, LIST* list);
+
+void make_dot_dump(FILE* dot_file, LIST* list);
+
 void print_list_chain(FILE* dot_file, LIST* list, int start_id, const char* color)
 {
     while (start_id != 0)
@@ -151,15 +163,14 @@ int list_dump_png(LIST* list)
 
 int file_dump_list(FILE* output_file, LIST* list)
 {
-    fprintf(output_file, "Main info: head: %d, tail: %d, free: %d, data_size: %d, elem_number: %d\n" ,
+    fprintf(output_file, "Main info: head: %d, tail: %d, free: %d, data_size: %d, elem_number: %d\nLIST DUMP:\nNumber: |" ,
           ARRAY[0].next, ARRAY[0].prev, FIRST_FREE, DATA_SIZE, list->elem_number);
-    fprintf(output_file, "LIST DUMP:\n");
-    fprintf(output_file, "Number: |");
+
     for (int i = 0; i < DATA_SIZE; i++)
         fprintf(output_file, " %11d |", i);
-    fprintf(output_file, "\n");
 
-    fprintf(output_file, "Data  : |");
+    fprintf(output_file, "\nData  : |");
+
     for (int i = 0; i < DATA_SIZE; i++)
     {
         if (ARRAY[i].value != POISON)
@@ -167,13 +178,76 @@ int file_dump_list(FILE* output_file, LIST* list)
         else
             fprintf(output_file, "     Poison  |");
     }
-    fprintf(output_file, "\n");
-    fprintf(output_file, "Next  : |");
+
+    fprintf(output_file, "\nNext  : |");
+
     for (int i = 0; i < DATA_SIZE; i++)
         fprintf(output_file," %11d |", ARRAY[i].next);
+
     fprintf(output_file,"\nPrev  : |");
+
     for (int i = 0; i < DATA_SIZE; i++)
         fprintf(output_file," %11d |", ARRAY[i].prev);
+
     fprintf(output_file,"\n\n");
     return 0;
+}
+
+int list_dump(LIST* list)
+{
+    printf(YELLOW "USER LIST DUMP:\n" END_OF_COLOUR);
+
+    if (list == NULL)
+    {
+        printf(RED "List_dump cannot find list, <NULL POINTER>" END_OF_COLOUR);
+        return -1;
+    }
+    printf(RED "[" END_OF_COLOUR);
+
+    for (int i = ARRAY[0].next; i != ARRAY[0].prev; i = ARRAY[i].next)
+        printf(" %11lf " RED "," END_OF_COLOUR, ARRAY[i].value);
+
+    if (ARRAY[0].next == ARRAY[0].prev && ARRAY[ARRAY[0].next].next != 0)
+    {
+        printf(RED "]" END_OF_COLOUR);
+        printf("\n\n");
+        return 0;
+    }
+    printf(" %11lf " RED "]\n\n" END_OF_COLOUR, ARRAY[ARRAY[0].prev].value);
+    return 0;
+}
+
+void list_dump_verbose(LIST* list)
+{
+    assert(list != NULL);
+
+    printf(YELLOW "Main info: head: %d, tail: %d, free: %d, data_size: %d, elem_number: %d\n"
+           YELLOW "LIST DUMP:\n" END_OF_COLOUR
+           "Number: " RED "|" END_OF_COLOUR,
+           ARRAY[0].next, ARRAY[0].prev, FIRST_FREE, DATA_SIZE, list->elem_number);
+
+    for (int i = 0; i < DATA_SIZE; i++)
+        printf(BLUE " %11d " RED "|" END_OF_COLOUR, i);
+
+    printf("\nData  : " RED "|" END_OF_COLOUR);
+
+    for (int i = 0; i < DATA_SIZE; i++)
+    {
+        if (ARRAY[i].value != POISON)
+            printf(" %11lf " RED "|" END_OF_COLOUR, ARRAY[i].value);
+        else
+            printf(GREEN"     Poison  " RED "|" END_OF_COLOUR);
+    }
+
+    printf("\nNext  : " RED "|" END_OF_COLOUR);
+
+    for (int i = 0; i < DATA_SIZE; i++)
+        printf(" %11d " RED "|" END_OF_COLOUR, ARRAY[i].next);
+
+    printf("\nPrev  : " RED "|" END_OF_COLOUR);
+
+    for (int i = 0; i < DATA_SIZE; i++)
+        printf(" %11d " RED "|" END_OF_COLOUR, ARRAY[i].prev);
+
+    printf("\n\n");
 }

@@ -1,7 +1,7 @@
-Main info: head: 1, tail: 1, free: 2, data_size: 8, elem_number: 1
+Main info: head: 1, tail: 2, free: 3, data_size: 4, elem_number: 2
 LIST DUMP:
-Number: |           0 |           1 |           2 |           3 |           4 |           5 |           6 |           7 |
-Data  : |     Poison  | 1221.000000 |     Poison  |     Poison  |     Poison  |     Poison  |     Poison  |     Poison  |
-Next  : |           1 |           0 |           3 |           4 |           5 |           6 |           7 |           0 |
-Prev  : |           1 |           0 |          -1 |          -1 |          -1 |          -1 |          -1 |          -1 |
+Number: |           0 |           1 |           2 |           3 |
+Data  : |     Poison  |    1.000000 |    5.000000 |     Poison  |
+Next  : |           1 |           2 |           0 |           0 |
+Prev  : |           2 |           0 |           1 |          -1 |
 
